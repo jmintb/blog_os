@@ -1,21 +1,35 @@
 #![no_std]
 #![no_main]
+#![feature(custom_test_frameworks)]
+#![test_runner(blog_os::test_runner)]
+#![reexport_test_harness_main = "test_main"]
 
+use blog_os::println;
 use core::panic::PanicInfo;
 
+#[cfg(not(test))]
 #[panic_handler]
 fn panic(info: &PanicInfo) -> ! {
     println!("{}", info);
     loop {}
 }
 
-mod vga_buffer;
-
-static HELLO: &[u8] = b"Hello World!";
+#[cfg(test)]
+#[panic_handler]
+fn panic(info: &PanicInfo) -> ! {
+    blog_os::test_panic_handler(info)
+}
 
 #[no_mangle]
 pub extern "C" fn _start() -> ! {
     println!("Hello WOrld{}", "!");
-    panic!("Help I am panicing");
+
+    #[cfg(test)]
+    test_main();
     loop {}
+}
+
+#[test_case]
+fn easy_test() {
+    assert_eq!(1, 1);
 }

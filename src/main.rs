@@ -11,7 +11,7 @@ use core::panic::PanicInfo;
 #[panic_handler]
 fn panic(info: &PanicInfo) -> ! {
     println!("{}", info);
-    loop {}
+    blog_os::hlt_loop();
 }
 
 #[cfg(test)]
@@ -24,9 +24,15 @@ fn panic(info: &PanicInfo) -> ! {
 pub extern "C" fn _start() -> ! {
     println!("Hello WOrld{}", "!");
 
+    blog_os::init();
+
+    // x86_64::instructions::interrupts::int3();
+
     #[cfg(test)]
     test_main();
-    loop {}
+
+    println!("We did not crash");
+    blog_os::hlt_loop();
 }
 
 #[test_case]

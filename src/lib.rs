@@ -8,9 +8,13 @@
 use core::ops::Fn;
 use core::panic::PanicInfo;
 
+use bootloader::entry_point;
+use bootloader::BootInfo;
+
 // pub mod idt;
 pub mod gdt;
 pub mod interrupts;
+pub mod memory;
 pub mod serial;
 pub mod vga_buffer;
 
@@ -75,8 +79,11 @@ pub fn test_panic_handler(info: &PanicInfo) -> ! {
 }
 
 #[cfg(test)]
+entry_point!(test_kernel_main);
+
+#[cfg(test)]
 #[no_mangle]
-pub extern "C" fn _start() -> ! {
+fn test_kernel_main(_boot_info: &'static BootInfo) -> ! {
     init();
     test_main();
     hlt_loop();

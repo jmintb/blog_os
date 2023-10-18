@@ -26,6 +26,7 @@ pkgs.mkShell {
     python311Packages.mkdocs-material
     python311Packages.mkdocs
     ripgrep
+    qemu
   ];
 
   # Certain Rust tools won't work without this

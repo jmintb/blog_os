@@ -5,6 +5,7 @@
 #![reexport_test_harness_main = "test_main"]
 #![feature(abi_x86_interrupt)]
 
+extern crate alloc;
 use core::ops::Fn;
 use core::panic::PanicInfo;
 
@@ -12,6 +13,7 @@ use bootloader::entry_point;
 use bootloader::BootInfo;
 
 // pub mod idt;
+pub mod allocator;
 pub mod gdt;
 pub mod interrupts;
 pub mod memory;

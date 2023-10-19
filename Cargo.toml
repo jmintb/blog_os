@@ -22,6 +22,7 @@ uart_16550 = "0.2.0"
 bit_field = "0.10.2"
 pic8259 = "0.10.4"
 pc-keyboard = "0.7.0"
+linked_list_allocator = "0.10.5"
 
 [package.metadata.bootimage]
 test-args = ["-device", "isa-debug-exit,iobase=0xf4,iosize=0x04", "-serial", "stdio", "-display", "none"]

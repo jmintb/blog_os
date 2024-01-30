@@ -1,16 +1,36 @@
-use core::{
-    alloc::{GlobalAlloc, Layout},
-    ptr::null_mut,
-};
+mod bump;
+mod dummy;
+mod fixed_size_block;
+mod linked_list;
 
-use linked_list_allocator::LockedHeap;
-
+pub use dummy::*;
 use x86_64::{
     structures::paging::{
         mapper::MapToError, FrameAllocator, Mapper, Page, PageTableFlags, Size4KiB,
     },
     VirtAddr,
 };
+
+use self::{fixed_size_block::FixedSizeAllocator, linked_list::LinkedListAllocator};
+
+#[global_allocator]
+static ALLOCATOR: Locked<FixedSizeAllocator> = Locked::new(FixedSizeAllocator::new());
+
+pub struct Locked<T> {
+    inner: spin::Mutex<T>,
+}
+
+impl<T> Locked<T> {
+    const fn new(inner: T) -> Self {
+        Self {
+            inner: spin::Mutex::new(inner),
+        }
+    }
+
+    pub fn lock(&self) -> spin::MutexGuard<T> {
+        self.inner.lock()
+    }
+}
 
 pub const HEAP_START: usize = 0x_4444_4444_0000;
 pub const HEAP_SIZE: usize = 100 * 1024;
@@ -36,23 +56,17 @@ pub fn init_heap(
     }
 
     unsafe {
-        ALLOCATOR.lock().init(HEAP_START as *mut u8, HEAP_SIZE);
+        ALLOCATOR.lock().init(HEAP_START, HEAP_SIZE);
     }
 
     Ok(())
 }
 
-#[global_allocator]
-static ALLOCATOR: LockedHeap = LockedHeap::empty();
-
-pub struct Dummy;
-
-unsafe impl GlobalAlloc for Dummy {
-    unsafe fn alloc(&self, _layout: Layout) -> *mut u8 {
-        null_mut()
-    }
-
-    unsafe fn dealloc(&self, ptr: *mut u8, layout: Layout) {
-        panic!("dealloc called")
+pub fn align_up(addr: usize, align: usize) -> usize {
+    let remainder = addr % align;
+    if remainder == 0 {
+        addr
+    } else {
+        addr - remainder + align
     }
 }

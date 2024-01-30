@@ -8,14 +8,12 @@ extern crate alloc;
 use alloc::boxed::Box;
 use blog_os::{
     allocator,
-    memory::{self, translate_addr},
+    memory::{self},
     println,
 };
 use bootloader::{entry_point, BootInfo};
 use core::panic::PanicInfo;
 use x86_64::{
-    registers::control::Cr3,
-    structures::paging::{Page, PageTable, Translate},
     VirtAddr,
 };
 
@@ -47,7 +45,7 @@ fn kernel_main(boot_info: &'static BootInfo) -> ! {
 
     allocator::init_heap(&mut mapper, &mut frame_allocator).expect("failed to init heap");
 
-    let x = Box::new(41);
+    let _x = Box::new(41);
 
     // let page = Page::containing_address(VirtAddr::new(0));
     // memory::create_example_mapper(page, &mut mapper, &mut frame_allocator);

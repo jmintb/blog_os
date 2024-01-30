@@ -14,7 +14,7 @@ entry_point!(main);
 fn main(boot_info: &'static BootInfo) -> ! {
     blog_os::init();
     use blog_os::allocator;
-    use blog_os::memory::{self, BootInfoFrameAllocator};
+    use blog_os::memory::{self};
     use x86_64::VirtAddr;
 
     let phys_mem_offset = VirtAddr::new(boot_info.physical_memory_offset);

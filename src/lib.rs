@@ -4,13 +4,13 @@
 #![test_runner(crate::test_runner)]
 #![reexport_test_harness_main = "test_main"]
 #![feature(abi_x86_interrupt)]
+#![feature(const_mut_refs)]
 
 extern crate alloc;
 use core::ops::Fn;
 use core::panic::PanicInfo;
 
 use bootloader::entry_point;
-use bootloader::BootInfo;
 
 // pub mod idt;
 pub mod allocator;
@@ -83,6 +83,7 @@ pub fn test_panic_handler(info: &PanicInfo) -> ! {
 #[cfg(test)]
 entry_point!(test_kernel_main);
 
+use bootloader::BootInfo;
 #[cfg(test)]
 #[no_mangle]
 fn test_kernel_main(_boot_info: &'static BootInfo) -> ! {

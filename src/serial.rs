@@ -3,7 +3,7 @@ use spin::Mutex;
 use uart_16550::SerialPort;
 use x86_64::instructions::interrupts::without_interrupts;
 
-use crate::interrupts;
+
 
 lazy_static! {
     pub static ref SERIAL1: Mutex<SerialPort> = {
